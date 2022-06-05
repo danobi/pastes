@@ -9,6 +9,7 @@ use simple_logger::SimpleLogger;
 use tide::{utils::After, Request, Response, StatusCode};
 
 const CHARSET: &[u8] = b"abcdefghijklmnopqrstuvwxyz0123456789";
+const MAX_PASTE_SIZE: usize = 50 * (1 << 10);
 
 #[derive(Parser, Debug)]
 struct Args {
@@ -85,6 +86,9 @@ async fn get(req: Request<State>) -> tide::Result {
 async fn post(mut req: Request<State>) -> tide::Result {
     let body = req.body_string().await?;
     info!("POST: {} bytes", body.len());
+    if body.len() > MAX_PASTE_SIZE {
+        return Ok(StatusCode::PayloadTooLarge.into());
+    }
 
     let id = gen_id();
     let conn = get_connection(req.state())?;
