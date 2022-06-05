@@ -1062,6 +1062,7 @@ dependencies = [
  "async-std",
  "clap",
  "log",
+ "rand 0.8.5",
  "rusqlite",
  "serde",
  "simple_logger",
