@@ -1,0 +1,23 @@
+pastes(1)                          PASTES                             pastes(1)
+
+NAME
+
+    pastes: command line pastebin
+
+TLDR:
+
+    $ echo Hello world. | curl -d '@-' pastes.dxuuu.xyz
+    https://pastes.dxuuu.xyz/abc123
+
+GET
+
+    pastes.dxuuu.xyz/
+        Man page
+
+    pastes.dxuuu.xyz/<id>/
+        Get paste with provided ID
+
+POST
+
+    pastes.dxuuu.xyz/
+        Create a paste
