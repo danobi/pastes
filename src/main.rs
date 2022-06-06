@@ -13,6 +13,8 @@ const MAX_PASTE_SIZE: usize = 50 * (1 << 10);
 
 #[derive(Parser, Debug)]
 struct Args {
+    #[structopt(long, default_value = "localhost")]
+    addr: String,
     #[structopt(short, long, default_value = "3400")]
     port: u16,
     #[structopt(long, default_value = "./pastes.sqlite3", parse(from_os_str))]
@@ -106,6 +108,7 @@ async fn post(mut req: Request<State>) -> tide::Result {
 #[async_std::main]
 async fn main() -> tide::Result<()> {
     let args = Args::parse();
+    let addr = args.addr.clone();
     let port = args.port;
 
     SimpleLogger::new()
@@ -123,7 +126,7 @@ async fn main() -> tide::Result<()> {
     app.at("/").get(homepage);
     app.at("/:id").get(get);
     app.at("/").post(post);
-    app.listen(format!("0.0.0.0:{port}")).await?;
+    app.listen(format!("{addr}:{port}")).await?;
 
     Ok(())
 }
