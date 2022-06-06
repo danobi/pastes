@@ -6,7 +6,7 @@ NAME
 
 TLDR:
 
-    $ echo Hello world. | curl -d '@-' pastes.dxuuu.xyz
+    $ echo Hello world. | curl --data-binary '@-' pastes.dxuuu.xyz
     https://pastes.dxuuu.xyz/abc123
 
 HTTP GET
@@ -28,7 +28,7 @@ CLIENT
 
         pastes() {
           [ -t 0 ] && echo "^C to cancel, ^D to send"
-          curl https://pastes.dxuuu.xyz -d '@-'
+          curl https://pastes.dxuuu.xyz --data-binary '@-'
         }
 
     Usage:
