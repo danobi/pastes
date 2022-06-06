@@ -9,7 +9,7 @@ TLDR:
     $ echo Hello world. | curl -d '@-' pastes.dxuuu.xyz
     https://pastes.dxuuu.xyz/abc123
 
-GET
+HTTP GET
 
     pastes.dxuuu.xyz/
         Man page
@@ -17,7 +17,21 @@ GET
     pastes.dxuuu.xyz/<id>/
         Get paste with provided ID
 
-POST
+HTTP POST
 
     pastes.dxuuu.xyz/
         Create a paste
+
+CLIENT
+
+    Here's a .bashrc client:
+
+        pastes() {
+          [ -t 0 ] && echo "^C to cancel, ^D to send"
+          curl https://pastes.dxuuu.xyz -d '@-'
+        }
+
+    Usage:
+
+        $ echo Hello world | pastes
+        https://pastes.dxuuu.xyz/jn5y6u
