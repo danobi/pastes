@@ -28,10 +28,10 @@ struct State {
 }
 
 impl State {
-    fn new(args: &Args) -> Result<Self> {
-        Ok(Self {
+    fn new(args: &Args) -> Self {
+        Self {
             db: args.db.clone(),
-        })
+        }
     }
 }
 
@@ -116,7 +116,7 @@ async fn main() -> tide::Result<()> {
         .init()
         .unwrap();
 
-    let mut app = tide::with_state(State::new(&args)?);
+    let mut app = tide::with_state(State::new(&args));
     app.with(After(|res: Response| async {
         if let Some(err) = res.error() {
             error!("Internal error: {err}");
