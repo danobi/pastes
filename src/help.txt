@@ -6,7 +6,7 @@ NAME
 
 TLDR:
 
-    $ echo Hello world. | curl --data-binary '@-' pastes.dxuuu.xyz
+    $ echo Hello world. | curl --data-binary '@-' https://pastes.dxuuu.xyz
     https://pastes.dxuuu.xyz/abc123
 
 HTTP GET
