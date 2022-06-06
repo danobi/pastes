@@ -1,0 +1,11 @@
+[Unit]
+Description=Command line pastebin
+After=system.slice
+
+[Service]
+ExecStart=/usr/local/bin/pastes --addr localhost --db /var/log/pastes.sqlite3
+Restart=always
+SyslogIdentifier=pastes
+
+[Install]
+WantedBy=multi-user.target
