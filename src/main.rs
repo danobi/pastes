@@ -9,7 +9,7 @@ use simple_logger::SimpleLogger;
 use tide::{utils::After, Request, Response, StatusCode};
 
 const CHARSET: &[u8] = b"abcdefghijklmnopqrstuvwxyz0123456789";
-const MAX_PASTE_SIZE: usize = 50 * (1 << 10);
+const MAX_PASTE_SIZE: usize = 1 << 20;
 
 #[derive(Parser, Debug)]
 struct Args {
