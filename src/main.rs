@@ -6,6 +6,9 @@ use log::{error, info, LevelFilter};
 use rand::Rng;
 use rusqlite::{Connection, OptionalExtension};
 use simple_logger::SimpleLogger;
+use syntect::highlighting::ThemeSet;
+use syntect::html::highlighted_html_for_string;
+use syntect::parsing::SyntaxSet;
 use tide::{utils::After, Request, Response, StatusCode};
 
 const CHARSET: &[u8] = b"abcdefghijklmnopqrstuvwxyz0123456789";
@@ -61,6 +64,58 @@ fn gen_id() -> String {
         .collect()
 }
 
+/// Simple check to see if request is a browser. Not perfect, but good enough.
+fn is_browser(req: &Request<State>) -> bool {
+    if let Some(ua) = req.header("User-Agent") {
+        ua.iter().any(|ua| {
+            let s = ua.as_str();
+            s.contains("Firefox")
+                || s.contains("Chrome")
+                || s.contains("Chromium")
+                || s.contains("Safari")
+        })
+    } else {
+        false
+    }
+}
+
+/// Attempt to highlight the contents
+fn highlight(c: &str) -> Option<String> {
+    let ts = ThemeSet::load_defaults();
+    let theme = &ts.themes["InspiredGitHub"];
+    let ss = SyntaxSet::load_defaults_newlines();
+    let syntax = match ss.find_syntax_by_first_line(c) {
+        Some(s) => s,
+        None => {
+            info!("Failed to determine syntax");
+            return None;
+        }
+    };
+
+    match highlighted_html_for_string(c, &ss, syntax, theme) {
+        Ok(h) => Some(h),
+        Err(e) => {
+            error!("Error highlighting: {}", e);
+            None
+        }
+    }
+}
+
+/// Response to a GET for a paste
+fn respond_get(req: &Request<State>, c: &str) -> Response {
+    if is_browser(req) {
+        match highlight(c) {
+            Some(h) => Response::builder(StatusCode::Ok)
+                .content_type("text/html")
+                .body(h)
+                .build(),
+            None => c.into(),
+        }
+    } else {
+        c.into()
+    }
+}
+
 async fn homepage(mut _req: Request<State>) -> tide::Result {
     let help = include_str!("./help.txt");
     Ok(help.into())
@@ -80,7 +135,7 @@ async fn get(req: Request<State>) -> tide::Result {
         .optional()?;
 
     match contents {
-        Some(c) => Ok(c.into()),
+        Some(c) => Ok(respond_get(&req, &c)),
         None => Ok(StatusCode::NotFound.into()),
     }
 }
